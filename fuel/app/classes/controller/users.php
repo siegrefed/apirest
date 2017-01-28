@@ -104,17 +104,17 @@ class Controller_Users extends Controller_Rest
         ///var_dump($decoded->username);
 
         
-           // var_dump($user["username"]);
+           var_dump($users["username"]);
             //var_dump($token["username"]);
-            if ($user["username"] == $token["username"] && $user["password"] == $token["password"]){
+            // if ($users["username"] == $token["username"] && $users["password"] == $token["password"]){
 
 
 
-                return $this->response(array ($user["username"],$user["password"]));
-            }else {
+            //     return $this->response(array ($user["username"],$user["password"]));
+            // }else {
 
-                return print('contraseña incorrecta');
-            }
+            //     return print('contraseña incorrecta');
+            // }
 
         
     }
@@ -158,28 +158,49 @@ class Controller_Users extends Controller_Rest
 
 
     public function get_verify(){
-        $auth = apache_request_headers();
-        $jwt = $auth["auth"];
-        $key = "siegrefed";
-
-        $decoded = JWT::decode($jwt, $key, array('HS256'));
-        $token = (array)$decoded;
-
-       $entry = Model_Users::find('all', array(
-            'where' => array(
-                array('username', $token["username"]),
-                
-            ),
-        ));
-       if ($entry == is_null()){
-            print_r("no existe el usuario");
-       }
-      return $entry;
-       //$users = (array)$entry;
-       //if ($users["username"] == $token["username"]){
-
-            //return print_r($users["username"]);}
-
+        $header = apache_request_headers();
+        if (isset($header['Authorization'])) 
+        {
+            $token = $header['Authorization'];
+            $dataJwtUser = JWT::decode($token, $this->key, $this->algorithm);
+            if (isset($dataJwtUser->username) and isset($dataJwtUser->password)) 
+            {
+                $user = Model_User::find('all', array(
+                    'where' => array(
+                        array('username', $dataJwtUser->username),
+                    )
+                ));
+                if ( ! empty($user) ) 
+                {
+                    foreach ($user as $key => $value) 
+                    {
+                        $id = $user[$key]->id;
+                        $username = $user[$key]->username;
+                        $password = $user[$key]->password;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if ($username == $dataJwtUser->username and $password == $dataJwtUser->password) 
+            {
+                return ('encontrado');
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
 
 
     }

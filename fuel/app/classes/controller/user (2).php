@@ -9,6 +9,10 @@ class Controller_User extends Controller_Rest
 	{
 		$usr = Input::post('username');
 		$pss = Input::post('password');
+		$key = 'siegrefed';
+
+		
+
 		$user = Model_Users::find('all', array(
 			'where' => array(
 					array('username', $usr),
@@ -36,7 +40,8 @@ class Controller_User extends Controller_Rest
 					"username" => $username, 
 					"password" => $password
 				);
-			$jwt = JWT::encode($token, $this->key);
+			$jwt = JWT::encode($token, $key);
+			
 
 			return[
 				'code' => 200,
@@ -47,37 +52,41 @@ class Controller_User extends Controller_Rest
 
 	public function get_users()
 	{
+		var_dump(verificar());
+		if(verificar()){
+
 		$user = Model_Users::find('all');
-		return $user;
+		return $user;}
+		else print('error');
 	}
 
-	public function post_user()
+	public function get_user($id)
 	{
-		$idUser = Input::post('id');
+		// $idUser = Input::post('id');
+
 		$user = Model_Users::find ('all', array(
 			'where' => array(
-				array('id', $idUser),
+				array('id', $id),
 				)
 			));
 
-		
-
 		return $user;
 
 	}
 
-	public function post_moduser()
+	public function post_update($id)
 	{
 		$user = new Model_Users();
-		$idUser = Input::post('id');
+		$user = Model_Users::find($id);
+
+		// $idUser = Input::post('id');
 		$username = Input::post('username');
 		$password = Input::post('password');
 		$email = Input::post('email');
 
 
 
-		$user = Model_Users::find ('all');
-
+		
 		if (! empty($user))
 		{
 			foreach ($user as $key) {
@@ -101,13 +110,13 @@ class Controller_User extends Controller_Rest
 
 	}
 
-	public function post_deluser()
+	public function post_delete($id)
 	{
 		$user = new Model_Users();
-		$idUser = Input::post('id');
+		// $idUser = Input::post('id');
 		$user = Model_Users::find('all', array(
 			'where' => array(
-				array('id', $idUser),
+				array('id', $id),
 				)
 			));
 		
@@ -129,7 +138,7 @@ class Controller_User extends Controller_Rest
 
 	}
 
-	public function post_reguser()
+	public function post_create()
 	{
 		$user = new Model_Users();
 
@@ -150,8 +159,17 @@ class Controller_User extends Controller_Rest
         		return $this->response(array('faltan campos'));
         		 
         	}
-        	        	else 
+        	else 
         	{
+        		// try
+        		// {
+        		// 	$user->save();
+        		// 	return $this->response(array('Ususario Creado'));
+        		// }
+        		// catch(exception $e)
+        		// {
+        		// 	print('Email ya registrado');
+        		// }
         		$bbdd = Model_Users::find('all', array(
         			'where' => array(
         				array('email', $email),
@@ -175,7 +193,32 @@ class Controller_User extends Controller_Rest
 
     }
 
-    
-        
+    private function verificar(){
+    	  $auth = apache_request_headers();
+        $jwt = $auth["auth"];
+        $key = "siegrefed";
+
+        $decoded = JWT::decode($jwt, $key, array('HS256'));
+        $token = (array)$decoded;
+
+        if (! empty($auth)){
+
+	       $entry = Model_Users::find('all', array(
+	            'where' => array(
+	                array('username', $token["username"]),
+	                
+	            ),
+	        ));
+	       if (empty($entry)){
+	            print("no existe el usuario");
+	            return false;
+	       }
+	      return true;
+	  	}
+	  	else{
+	  		print("logeate primero");
+	  		return false;
+	  	}
+    }      
 	
 }

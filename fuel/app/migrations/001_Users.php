@@ -15,6 +15,8 @@ class Users
             'fk_admin' => array('type' => 'int', 'constraint' => 11),
             'fk_player' => array('type' => 'int', 'constraint' => 11),
         ), array('id'));
+
+       
     }
 
     function down()

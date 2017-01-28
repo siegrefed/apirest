@@ -24,19 +24,19 @@ protected static $_properties = array(
              //'type' => false, // this prevents this field from being rendered on a form
             //),
         ),
-        //'email' => array(
-        //        'data_type' => 'varchar'
-        //    ),
-        //'imagen' => array(
-        //        'data_type' => 'varchar'
-        //    ),
-        //'fk_admin' => array(
-        //        'data_type' => 'int'
-        //    ),
-        //'fk_player' => array(
-        //        'data_type' => 'int'
-        //    ),
-        //'updated_at' => array('data_type' => 'int', 'label' => 'Updated At')
+        'email' => array(
+                'data_type' => 'varchar'
+            ),
+        'imagen' => array(
+                'data_type' => 'varchar'
+            ),
+        // 'fk_admin' => array(
+        //         'data_type' => 'int'
+        //     ),
+        // 'fk_player' => array(
+        //         'data_type' => 'int'
+        //     ),
+        
     );
 
 
